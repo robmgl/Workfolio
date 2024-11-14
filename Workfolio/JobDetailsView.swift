@@ -33,25 +33,49 @@ struct JobDetailsView: View {
                 .foregroundColor(.gray)
                 .padding(.bottom, 20)
                 .frame(maxWidth: .infinity, alignment: .center)
-            Text("Company: \(job.company)")
-                .font(.system(size: 30))
-                .bold()
-            Text("Position: \(job.title)")
-                .font(.system(size: 30))
-            Text("Status: \(job.status.rawValue)")
-                .font(.system(size: 20))
-                .bold()
+            HStack {
+                Image(systemName: "person.3.fill")
+                    .foregroundColor(.gray)
+                Text("Company: \(job.company)")
+                    .font(.system(size: 30))
+                    .bold()
+            }
+            HStack {
+                Image(systemName: "doc.text.fill")
+                    .foregroundColor(.gray)
+                Text("Position: \(job.title)")
+                    .font(.system(size: 30))
+            }
+            HStack {
+                Image(systemName: "note.text")
+                    .foregroundColor(.gray)
+                Text("Status: \(job.status.rawValue)")
+                    .font(.system(size: 20))
+                    .bold()
+            }
             if let location = job.location, !location.isEmpty {
-                Text("Location: \(location)")
-                    .font(.subheadline)
+                HStack {
+                    Image(systemName: "mappin.and.ellipse")
+                        .foregroundColor(.gray)
+                    Text("Location: \(location)")
+                        .font(.subheadline)
+                }
             }
             if let salary = job.salary {
-                Text("Salary: \(salary, format: .currency(code: "USD"))")
-                    .font(.subheadline)
+                HStack {
+                    Image(systemName: "dollarsign.circle.fill")
+                        .foregroundColor(.gray)
+                    Text("Salary: \(salary, format: .currency(code: "USD"))")
+                        .font(.subheadline)
+                }
             }
             if let workMode = job.workMode {
-                Text("Work Mode: \(workMode.rawValue)")
-                    .font(.subheadline)
+                HStack {
+                    Image(systemName: "desktopcomputer")
+                        .foregroundColor(.gray)
+                    Text("Work Mode: \(workMode.rawValue)")
+                        .font(.subheadline)
+                }
             }
             if let updatedDate = job.updatedDate {
                 Text("Updated: \(dateFormatter.string(from: updatedDate))")

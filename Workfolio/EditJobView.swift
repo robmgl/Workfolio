@@ -33,27 +33,49 @@ struct EditJobView: View {
     var body: some View {
         Form {
             Section(header: Text("Edit Job Details")) {
-                TextField("Company", text: $newCompany)
-                TextField("Title", text: $newTitle)
-                Picker("Status", selection: $newStatus) {
-                    ForEach(JobStatus.allCases) { status in
-                        Text(status.rawValue).tag(status)
+                HStack {
+                    Image(systemName: "person.3.fill")
+                        .foregroundColor(.gray)
+                    TextField("Company", text: $newCompany)
+                }
+                HStack {
+                    Image(systemName: "doc.text.fill")
+                        .foregroundColor(.gray)
+                    TextField("Title", text: $newTitle)
+                }
+                HStack {
+                    Image(systemName: "note.text")
+                        .foregroundColor(.gray)
+                    Picker("Status", selection: $newStatus) {
+                        ForEach(JobStatus.allCases) { status in
+                            Text(status.rawValue).tag(status)
+                        }
                     }
                 }
-                TextField("Location", text: $newLocation)
-                TextField("Salary", value: $newSalary, format: .currency(code: "USD"))
-                    .keyboardType(.decimalPad)
-                Picker("Work Mode", selection: $newWorkMode) {
-                    Text("None").tag(WorkMode?.none)
-                    ForEach(WorkMode.allCases) { mode in
-                        Text(mode.rawValue).tag(mode as WorkMode?)
+                HStack {
+                    Image(systemName: "mappin.and.ellipse")
+                        .foregroundColor(.gray)
+                    TextField("Location", text: $newLocation)
+                }
+                HStack {
+                    Image(systemName: "dollarsign.circle.fill")
+                        .foregroundColor(.gray)
+                    TextField("Salary", value: $newSalary, format: .currency(code: "USD"))
+                        .keyboardType(.decimalPad)
+                }
+                HStack {
+                    Image(systemName: "desktopcomputer")
+                        .foregroundColor(.gray)
+                    Picker("Work Mode", selection: $newWorkMode) {
+                        Text("None").tag(WorkMode?.none)
+                        ForEach(WorkMode.allCases) { mode in
+                            Text(mode.rawValue).tag(mode as WorkMode?)
+                        }
                     }
                 }
             }
-
             Section {
                 Button(action: {
-                    // Update job details
                     job.title = newTitle
                     job.company = newCompany
                     job.status = newStatus
