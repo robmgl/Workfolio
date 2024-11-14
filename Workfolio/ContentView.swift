@@ -13,43 +13,46 @@ struct ContentView: View {
     @State private var showingAddJobView = false
     @State private var showingJobDetails = false
     @State private var selectedJob: Job?
-
+    
     var body: some View {
         NavigationView {
-            VStack {
-                TextField("Search by job title or company", text: $viewModel.searchText)
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
-                    .padding()
-                    .background(Color.white)
-                    .cornerRadius(8)
-                
-                if viewModel.filteredJobs.isEmpty {
-                    VStack {
-                        Image(systemName: "briefcase.fill")
-                            .font(.system(size: 50))
-                            .foregroundColor(.gray)
-                        Text("No Applications")
-                            .font(.title2)
-                            .foregroundColor(.gray)
-                    }
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .background(Color.white)
-                    .cornerRadius(10)
-                } else {
-                    List {
-                        ForEach(viewModel.filteredJobs) { job in
-                            JobCardView(viewModel: viewModel, job: job)
-                                .onTapGesture {
-                                    selectedJob = job
-                                    showingJobDetails = true
-                                }
+            ScrollView {
+                VStack {
+                    TextField("Search by job title or company", text: $viewModel.searchText)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                        .padding()
+                        .background(Color.white)
+                        .cornerRadius(8)
+                    
+                    if viewModel.filteredJobs.isEmpty {
+                        VStack {
+                            Image(systemName: "briefcase.fill")
+                                .font(.system(size: 50))
+                                .foregroundColor(.gray)
+                            Text("No Applications")
+                                .font(.title2)
+                                .foregroundColor(.gray)
                         }
-                        .onDelete(perform: viewModel.deleteJob)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .background(Color.white)
+                        .cornerRadius(10)
+                    } else {
+                        VStack {
+                            ForEach(viewModel.filteredJobs) { job in
+                                JobCardView(viewModel: viewModel, job: job)
+                                    .onTapGesture {
+                                        selectedJob = job
+                                        showingJobDetails = true
+                                    }
+                            }
+                            .onDelete(perform: viewModel.deleteJob)
+                        }
                     }
-                    .listStyle(PlainListStyle())
                 }
+                .padding()
             }
             .navigationTitle("Workfolio")
+            .navigationBarTitleDisplayMode(.automatic) // Apply collapsing title here
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(action: {
