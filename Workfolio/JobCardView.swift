@@ -34,6 +34,10 @@ struct JobCardView: View {
                         Text("Salary: \(salary, format: .currency(code: "USD"))")
                             .font(.subheadline)
                     }
+                    if let workMode = job.workMode {
+                        Text("Work Mode: \(workMode.rawValue)")
+                            .font(.subheadline)
+                    }
                     Text("Status: \(job.status.rawValue)")
                         .font(.subheadline)
                         .bold()

@@ -33,7 +33,6 @@ struct JobDetailsView: View {
                 .foregroundColor(.gray)
                 .padding(.bottom, 20)
                 .frame(maxWidth: .infinity, alignment: .center)
-            
             Text("Company: \(job.company)")
                 .font(.system(size: 30))
                 .bold()
@@ -42,19 +41,18 @@ struct JobDetailsView: View {
             Text("Status: \(job.status.rawValue)")
                 .font(.system(size: 20))
                 .bold()
-            
-            // Display location if available
             if let location = job.location, !location.isEmpty {
                 Text("Location: \(location)")
                     .font(.subheadline)
             }
-            
-            // Display salary if available
             if let salary = job.salary {
                 Text("Salary: \(salary, format: .currency(code: "USD"))")
                     .font(.subheadline)
             }
-
+            if let workMode = job.workMode {
+                Text("Work Mode: \(workMode.rawValue)")
+                    .font(.subheadline)
+            }
             if let updatedDate = job.updatedDate {
                 Text("Updated: \(dateFormatter.string(from: updatedDate))")
                     .font(.subheadline)
@@ -86,5 +84,6 @@ struct JobDetailsView: View {
         .cornerRadius(12)
         .shadow(radius: 15)
         .navigationTitle("Job Details")
+        .navigationBarTitleDisplayMode(.inline)
     }
 }

@@ -24,9 +24,8 @@ class JobListViewModel: ObservableObject {
         }
     }
 
-    // Method to add a new job with location and salary fields
-    func addJob(company: String, title: String, status: JobStatus, location: String? = nil, salary: Double? = nil) {
-        let newJob = Job(company: company, title: title, status: status, dateAdded: Date(), location: location, salary: salary)
+    func addJob(company: String, title: String, status: JobStatus, location: String? = nil, salary: Double? = nil, workMode: WorkMode? = nil) {
+        let newJob = Job(company: company, title: title, status: status, dateAdded: Date(), location: location, salary: salary, workMode: workMode)
         jobs.append(newJob)
         saveJobs()
     }

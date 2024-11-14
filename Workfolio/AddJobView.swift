@@ -16,6 +16,7 @@ struct AddJobView: View {
     @State private var status: JobStatus = .toApply
     @State private var location: String = ""
     @State private var salary: Double?
+    @State private var workMode: WorkMode? = nil
 
     var body: some View {
         NavigationView {
@@ -31,10 +32,16 @@ struct AddJobView: View {
                     TextField("Location", text: $location)
                     TextField("Salary", value: $salary, format: .currency(code: "USD"))
                         .keyboardType(.decimalPad)
+                    Picker("Work Mode", selection: $workMode) {
+                        Text("None").tag(WorkMode?.none)
+                        ForEach(WorkMode.allCases) { mode in
+                            Text(mode.rawValue).tag(mode as WorkMode?)
+                        }
+                    }
                 }
                 Button(action: {
                     if !company.isEmpty && !title.isEmpty {
-                        viewModel.addJob(company: company, title: title, status: status, location: location, salary: salary)
+                        viewModel.addJob(company: company, title: title, status: status, location: location, salary: salary, workMode: workMode)
                         presentationMode.wrappedValue.dismiss()
                     }
                 }) {

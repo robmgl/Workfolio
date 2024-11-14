@@ -30,14 +30,15 @@ class Job: ObservableObject, Identifiable, Codable {
     @Published var status: JobStatus
     @Published var dateAdded: Date
     @Published var updatedDate: Date?
-    @Published var location: String?   // New property
-    @Published var salary: Double?     // New property
+    @Published var location: String?
+    @Published var salary: Double?
+    @Published var workMode: WorkMode?
 
     private enum CodingKeys: String, CodingKey {
-        case id, company, title, status, dateAdded, updatedDate, location, salary
+        case id, company, title, status, dateAdded, updatedDate, location, salary, workMode
     }
 
-    init(id: String = UUID().uuidString, company: String, title: String, status: JobStatus, dateAdded: Date, updatedDate: Date? = nil, location: String? = nil, salary: Double? = nil) {
+    init(id: String = UUID().uuidString, company: String, title: String, status: JobStatus, dateAdded: Date, updatedDate: Date? = nil, location: String? = nil, salary: Double? = nil, workMode: WorkMode? = nil) {
         self.id = id
         self.company = company
         self.title = title
@@ -46,9 +47,9 @@ class Job: ObservableObject, Identifiable, Codable {
         self.updatedDate = updatedDate
         self.location = location
         self.salary = salary
+        self.workMode = workMode
     }
 
-    // Custom decoding initializer
     required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         id = try container.decode(String.self, forKey: .id)
@@ -59,9 +60,9 @@ class Job: ObservableObject, Identifiable, Codable {
         updatedDate = try? container.decode(Date.self, forKey: .updatedDate)
         location = try? container.decode(String.self, forKey: .location)
         salary = try? container.decode(Double.self, forKey: .salary)
+        workMode = try? container.decode(WorkMode.self, forKey: .workMode)
     }
 
-    // Custom encoding method
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(id, forKey: .id)
@@ -72,5 +73,6 @@ class Job: ObservableObject, Identifiable, Codable {
         try? container.encode(updatedDate, forKey: .updatedDate)
         try? container.encode(location, forKey: .location)
         try? container.encode(salary, forKey: .salary)
+        try? container.encode(workMode, forKey: .workMode)
     }
 }
