@@ -26,7 +26,7 @@ struct JobCardView: View {
                         .bold()
                     Text("@ \(job.company)")
                         .font(.system(size: 17))
-                    if let location = job.location {
+                    if let location = job.location, !location.isEmpty {
                         Text("Location: \(location)")
                             .font(.subheadline)
                     }
