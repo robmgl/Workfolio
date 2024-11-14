@@ -44,8 +44,8 @@ struct ContentView: View {
                                         selectedJob = job
                                         showingJobDetails = true
                                     }
+                                Divider()
                             }
-                            .onDelete(perform: viewModel.deleteJob)
                         }
                     }
                 }
