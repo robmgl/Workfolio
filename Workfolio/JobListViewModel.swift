@@ -11,16 +11,22 @@ import Combine
 class JobListViewModel: ObservableObject {
     @Published var jobs: [Job] = []
     @Published var searchText: String = ""
+    @Published var sortOption: SortOption = .dateAdded
+    @Published var selectedStatus: JobStatus? = nil
 
-    // Computed property for filtered jobs
     var filteredJobs: [Job] {
-        if searchText.isEmpty {
-            return jobs
-        } else {
-            return jobs.filter {
-                $0.title.lowercased().contains(searchText.lowercased()) ||
-                $0.company.lowercased().contains(searchText.lowercased())
-            }
+        let filteredJobs = jobs.filter { job in
+            // Apply search filter
+            (searchText.isEmpty || job.title.lowercased().contains(searchText.lowercased()) || job.company.lowercased().contains(searchText.lowercased()))
+            // Apply status filter
+            && (selectedStatus == nil || job.status == selectedStatus)
+        }
+        
+        switch sortOption {
+        case .dateAdded:
+            return filteredJobs.sorted { $0.dateAdded > $1.dateAdded }
+        case .status:
+            return filteredJobs.sorted { $0.status.rawValue < $1.status.rawValue }
         }
     }
 
@@ -30,7 +36,6 @@ class JobListViewModel: ObservableObject {
         saveJobs()
     }
 
-    // Method to update a job's status and save changes
     func updateJob(_ job: Job, newStatus: JobStatus) {
         if let index = jobs.firstIndex(where: { $0.id == job.id }) {
             jobs[index].status = newStatus
@@ -39,13 +44,11 @@ class JobListViewModel: ObservableObject {
         }
     }
 
-    // Method to delete jobs at specific offsets and save changes
     func deleteJob(at offsets: IndexSet) {
         jobs.remove(atOffsets: offsets)
         saveJobs()
     }
 
-    // Method to save jobs array to UserDefaults
     func saveJobs() {
         do {
             let data = try JSONEncoder.custom.encode(jobs)
@@ -55,7 +58,6 @@ class JobListViewModel: ObservableObject {
         }
     }
 
-    // Initializer to load jobs from UserDefaults
     init() {
         if let data = UserDefaults.standard.data(forKey: "jobs") {
             do {
@@ -67,7 +69,6 @@ class JobListViewModel: ObservableObject {
     }
 }
 
-// Extensions to provide custom encoding and decoding strategies for dates
 extension JSONEncoder {
     static let custom: JSONEncoder = {
         let encoder = JSONEncoder()

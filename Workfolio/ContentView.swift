@@ -4,7 +4,6 @@
 //
 //  Created by Rob Miguel on 11/13/24.
 //
-//Testing
 
 import SwiftUI
 
@@ -13,7 +12,7 @@ struct ContentView: View {
     @State private var showingAddJobView = false
     @State private var showingJobDetails = false
     @State private var selectedJob: Job?
-    
+
     var body: some View {
         NavigationView {
             ScrollView {
@@ -24,6 +23,7 @@ struct ContentView: View {
                         .background(Color.white)
                         .cornerRadius(8)
                     
+                    // Job List or No Applications View
                     if viewModel.filteredJobs.isEmpty {
                         VStack {
                             Image(systemName: "briefcase.fill")
@@ -52,8 +52,22 @@ struct ContentView: View {
                 .padding()
             }
             .navigationTitle("Workfolio")
-            .navigationBarTitleDisplayMode(.automatic) // Apply collapsing title here
+            .navigationBarTitleDisplayMode(.automatic)
             .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Menu {
+                        Picker("Filter by Status", selection: $viewModel.selectedStatus) {
+                            Text("All").tag(JobStatus?.none) // Show all jobs
+                            ForEach(JobStatus.allCases) { status in
+                                Text(status.rawValue).tag(status as JobStatus?)
+                            }
+                        }
+                    } label: {
+                        Image(systemName: "line.3.horizontal.decrease.circle") // Filter icon
+                            .foregroundColor(.accentColor)
+                    }
+                }
+
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(action: {
                         showingAddJobView = true
@@ -77,7 +91,6 @@ struct ContentView: View {
         }
     }
 }
-
 
 extension LinearGradient {
     static let blueOrangeGradient = LinearGradient(
