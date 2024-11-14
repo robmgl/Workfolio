@@ -18,6 +18,7 @@ struct EditJobView: View {
     @State private var newLocation: String
     @State private var newSalary: Double?
     @State private var newWorkMode: WorkMode?
+    @State private var showingDeleteAlert = false
 
     init(viewModel: JobListViewModel, job: Binding<Job>) {
         self.viewModel = viewModel
@@ -92,6 +93,32 @@ struct EditJobView: View {
                         .background(Color.blue)
                         .foregroundColor(.white)
                         .cornerRadius(10)
+                }
+                
+                Button(action: {
+                    showingDeleteAlert = true
+                }) {
+                    Text("Delete Job")
+                        .padding()
+                        .frame(maxWidth: .infinity)
+                        .background(Color.red)
+                        .foregroundColor(.white)
+                        .cornerRadius(10)
+                }
+                .alert(isPresented: $showingDeleteAlert) {
+                    Alert(
+                        title: Text("Delete Job"),
+                        message: Text("Are you sure you want to delete this job?"),
+                        primaryButton: .destructive(Text("Delete")) {
+                            // Delete the job and dismiss view
+                            if let index = viewModel.jobs.firstIndex(where: { $0.id == job.id }) {
+                                viewModel.jobs.remove(at: index)
+                                viewModel.saveJobs()
+                                presentationMode.wrappedValue.dismiss()
+                            }
+                        },
+                        secondaryButton: .cancel()
+                    )
                 }
             }
         }
