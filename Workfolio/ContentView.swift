@@ -12,18 +12,24 @@ struct ContentView: View {
     @State private var showingAddJobView = false
     @State private var showingJobDetails = false
     @State private var selectedJob: Job?
-
+    
     var body: some View {
         NavigationView {
             ScrollView {
                 VStack {
-                    TextField("Search by job title or company", text: $viewModel.searchText)
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
-                        .padding()
+                    if viewModel.jobs.count > 1 {
+                        HStack {
+                            Image(systemName: "magnifyingglass.circle.fill")
+                                .foregroundColor(.gray)
+                                .font(.system(size: 25))
+                            TextField("Search by job title or company", text: $viewModel.searchText)
+                                .textFieldStyle(RoundedBorderTextFieldStyle())
+                                .padding(1)
+                        }
                         .background(Color.white)
                         .cornerRadius(8)
-                    
-                    // Job List or No Applications View
+                        .padding()
+                    }
                     if viewModel.filteredJobs.isEmpty {
                         VStack {
                             Image(systemName: "briefcase.fill")
@@ -67,7 +73,6 @@ struct ContentView: View {
                             .foregroundColor(.accentColor)
                     }
                 }
-
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(action: {
                         showingAddJobView = true
