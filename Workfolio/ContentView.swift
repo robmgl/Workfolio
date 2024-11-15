@@ -35,7 +35,7 @@ struct ContentView: View {
                             Image(systemName: "briefcase.fill")
                                 .font(.system(size: 50))
                                 .foregroundColor(.gray)
-                            Text("No Applications")
+                            Text(noJobsMessage)
                                 .font(.title2)
                                 .foregroundColor(.gray)
                         }
@@ -93,6 +93,15 @@ struct ContentView: View {
                 )
                 .hidden()
             )
+        }
+    }
+
+    // Computed property for the no jobs message
+    private var noJobsMessage: String {
+        if let selectedStatus = viewModel.selectedStatus {
+            return "No jobs with \(selectedStatus.rawValue) status"
+        } else {
+            return "No Applications"
         }
     }
 }
