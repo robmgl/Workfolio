@@ -11,54 +11,38 @@ struct JobDetailsView: View {
     @Environment(\.presentationMode) private var presentationMode
     @ObservedObject var viewModel: JobListViewModel
     @Binding var job: Job
-
-    private let dateFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "MM/dd/yyyy"
-        return formatter
-    }()
-
-    private var companyInitial: String {
-        String(job.company.prefix(1)).lowercased()
-    }
-
-    private var companyIconName: String {
-        "\(companyInitial).circle.fill"
-    }
+    @State private var isEditingPresented = false // Track if EditJobView is presented
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            Image(systemName: companyIconName)
-                .font(.system(size: 100))
+        VStack(alignment: .leading, spacing: 14) {
+            Image(systemName: "\(job.company.prefix(1).lowercased()).circle.fill")
+                .font(.system(size: 45))
                 .foregroundColor(.gray)
-                .padding(.bottom, 20)
                 .frame(maxWidth: .infinity, alignment: .center)
-            HStack {
-                Image(systemName: "person.3.fill")
-                    .foregroundColor(.gray)
-                Text("Company: \(job.company)")
-                    .font(.system(size: 30))
+         
+                Text(job.company)
+                    .font(.system(size: 55))
                     .bold()
-            }
+                    .frame(maxWidth: .infinity, alignment: .center)
+            Divider()
             HStack {
                 Image(systemName: "doc.text.fill")
                     .foregroundColor(.gray)
                 Text("Position: \(job.title)")
-                    .font(.system(size: 30))
+                    .font(.system(size: 20))
             }
             HStack {
                 Image(systemName: "note.text")
                     .foregroundColor(.gray)
                 Text("Status: \(job.status.rawValue)")
                     .font(.system(size: 20))
-                    .bold()
             }
             if let location = job.location, !location.isEmpty {
                 HStack {
                     Image(systemName: "mappin.and.ellipse")
                         .foregroundColor(.gray)
                     Text("Location: \(location)")
-                        .font(.subheadline)
+                        .font(.system(size: 20))
                 }
             }
             if let salary = job.salary {
@@ -66,7 +50,7 @@ struct JobDetailsView: View {
                     Image(systemName: "dollarsign.circle.fill")
                         .foregroundColor(.gray)
                     Text("Salary: \(salary, format: .currency(code: "USD"))")
-                        .font(.subheadline)
+                        .font(.system(size: 20))
                 }
             }
             if let workMode = job.workMode {
@@ -74,22 +58,24 @@ struct JobDetailsView: View {
                     Image(systemName: "desktopcomputer")
                         .foregroundColor(.gray)
                     Text("Work Mode: \(workMode.rawValue)")
-                        .font(.subheadline)
+                        .font(.system(size: 20))
                 }
             }
             if let updatedDate = job.updatedDate {
-                Text("Updated: \(dateFormatter.string(from: updatedDate))")
+                Text("Updated: \(DateFormatter.localizedString(from: updatedDate, dateStyle: .short, timeStyle: .none))")
                     .font(.subheadline)
                     .foregroundColor(.gray)
             }
-            Text("Date Added: \(dateFormatter.string(from: job.dateAdded))")
+            Text("Date Added: \(DateFormatter.localizedString(from: job.dateAdded, dateStyle: .short, timeStyle: .none))")
                 .font(.subheadline)
                 .foregroundColor(.gray)
             
             Spacer()
-            
+
             HStack {
-                NavigationLink(destination: EditJobView(viewModel: viewModel, job: $job)) {
+                Button(action: {
+                    isEditingPresented = true // Show EditJobView
+                }) {
                     Text("Update Job")
                         .padding()
                         .frame(maxWidth: .infinity)
@@ -106,8 +92,11 @@ struct JobDetailsView: View {
         .padding()
         .background(Color.white)
         .cornerRadius(12)
-        .shadow(radius: 15)
         .navigationTitle("Job Details")
         .navigationBarTitleDisplayMode(.inline)
+        .sheet(isPresented: $isEditingPresented) {
+            EditJobView(viewModel: viewModel, job: $job, isPresented: $isEditingPresented)
+        }
     }
 }
+

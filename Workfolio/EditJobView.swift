@@ -6,11 +6,13 @@
 //
 
 import SwiftUI
+import Combine
 
 struct EditJobView: View {
     @Environment(\.presentationMode) private var presentationMode
     @ObservedObject var viewModel: JobListViewModel
     @Binding var job: Job
+    @Binding var isPresented: Bool
 
     @State private var newTitle: String
     @State private var newCompany: String
@@ -18,12 +20,15 @@ struct EditJobView: View {
     @State private var newLocation: String
     @State private var newSalary: Double?
     @State private var newWorkMode: WorkMode?
-    @State private var showingDeleteAlert = false
     @State private var errorMessage: String?
+    @State private var showingDeleteAlert = false
 
-    init(viewModel: JobListViewModel, job: Binding<Job>) {
+    let textLimit = 20
+
+    init(viewModel: JobListViewModel, job: Binding<Job>, isPresented: Binding<Bool>) {
         self.viewModel = viewModel
         _job = job
+        _isPresented = isPresented
         _newTitle = State(initialValue: job.wrappedValue.title)
         _newCompany = State(initialValue: job.wrappedValue.company)
         _newStatus = State(initialValue: job.wrappedValue.status)
@@ -39,11 +44,13 @@ struct EditJobView: View {
                     Image(systemName: "person.3.fill")
                         .foregroundColor(.gray)
                     TextField("Company", text: $newCompany)
+                        .onReceive(Just(newCompany)) { _ in limitText(&newCompany, textLimit) }
                 }
                 HStack {
                     Image(systemName: "doc.text.fill")
                         .foregroundColor(.gray)
                     TextField("Title", text: $newTitle)
+                        .onReceive(Just(newTitle)) { _ in limitText(&newTitle, textLimit) }
                 }
                 HStack {
                     Image(systemName: "note.text")
@@ -58,6 +65,7 @@ struct EditJobView: View {
                     Image(systemName: "mappin.and.ellipse")
                         .foregroundColor(.gray)
                     TextField("Location", text: $newLocation)
+                        .onReceive(Just(newLocation)) { _ in limitText(&newLocation, textLimit) }
                 }
                 HStack {
                     Image(systemName: "dollarsign.circle.fill")
@@ -104,7 +112,6 @@ struct EditJobView: View {
                     .cornerRadius(10)
             }
             
-            // Display error message if fields are missing
             if let errorMessage = errorMessage {
                 Text(errorMessage)
                     .foregroundColor(.red)
@@ -112,7 +119,6 @@ struct EditJobView: View {
                     .padding(.top, 5)
             }
             
-            // Delete Job Button
             Button(action: {
                 showingDeleteAlert = true // Trigger delete confirmation
             }) {
@@ -131,7 +137,7 @@ struct EditJobView: View {
                         if let index = viewModel.jobs.firstIndex(where: { $0.id == job.id }) {
                             viewModel.jobs.remove(at: index)
                             viewModel.saveJobs()
-                            presentationMode.wrappedValue.dismiss()
+                            isPresented = false // Dismiss JobDetailsView and navigate to ContentView
                         }
                     },
                     secondaryButton: .cancel()
@@ -139,6 +145,13 @@ struct EditJobView: View {
             }
         }
         .navigationTitle("Edit Job")
+    }
+
+    // Function to enforce the character limit
+    func limitText(_ text: inout String, _ upper: Int) {
+        if text.count > upper {
+            text = String(text.prefix(upper))
+        }
     }
 }
 

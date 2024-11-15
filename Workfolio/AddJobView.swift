@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Combine
 
 struct AddJobView: View {
     @Environment(\.presentationMode) private var presentationMode
@@ -19,6 +20,8 @@ struct AddJobView: View {
     @State private var workMode: WorkMode? = nil
     @State private var errorMessage: String?
 
+    let textLimit = 20
+
     var body: some View {
         NavigationView {
             Form {
@@ -27,12 +30,14 @@ struct AddJobView: View {
                         Image(systemName: "person.3.fill")
                             .foregroundColor(.gray)
                         TextField("Company Name", text: $company)
+                            .onReceive(Just(company)) { _ in limitText(&company, textLimit) }
                     }
                     
                     HStack {
                         Image(systemName: "doc.text.fill")
                             .foregroundColor(.gray)
                         TextField("Job Title", text: $title)
+                            .onReceive(Just(title)) { _ in limitText(&title, textLimit) }
                     }
                     
                     HStack {
@@ -49,6 +54,7 @@ struct AddJobView: View {
                         Image(systemName: "mappin.and.ellipse")
                             .foregroundColor(.gray)
                         TextField("Location", text: $location)
+                            .onReceive(Just(location)) { _ in limitText(&location, textLimit) }
                     }
                     
                     HStack {
@@ -91,7 +97,6 @@ struct AddJobView: View {
                         .font(.headline)
                 }
                 
-                // Display error message if fields are missing
                 if let errorMessage = errorMessage {
                     Text(errorMessage)
                         .foregroundColor(.red)
@@ -108,10 +113,17 @@ struct AddJobView: View {
                         Image(systemName: "xmark")
                             .foregroundColor(.black)
                             .font(.system(size: 20))
-                        
                     }
                 }
             }
         }
     }
+
+    // Function to enforce the character limit
+    func limitText(_ text: inout String, _ upper: Int) {
+        if text.count > upper {
+            text = String(text.prefix(upper))
+        }
+    }
 }
+
