@@ -21,10 +21,10 @@ struct JobCardView: View {
         VStack(alignment: .leading, spacing: 10) {
             HStack {
                 VStack(alignment: .leading, spacing: 5) {
-                    Text(job.title)
-                        .font(.system(size: 22))
+                    Text(job.company)
+                        .font(.system(size: 24))
                         .bold()
-                    Text("@ \(job.company)")
+                    Text(job.title)
                         .font(.system(size: 17))
                     if let location = job.location, !location.isEmpty {
                         Text("Location: \(location)")
