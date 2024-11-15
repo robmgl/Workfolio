@@ -33,12 +33,24 @@ class Job: ObservableObject, Identifiable, Codable {
     @Published var location: String?
     @Published var salary: Double?
     @Published var workMode: WorkMode?
+    @Published var notes: String?
 
     private enum CodingKeys: String, CodingKey {
-        case id, company, title, status, dateAdded, updatedDate, location, salary, workMode
+        case id, company, title, status, dateAdded, updatedDate, location, salary, workMode, notes
     }
 
-    init(id: String = UUID().uuidString, company: String, title: String, status: JobStatus, dateAdded: Date, updatedDate: Date? = nil, location: String? = nil, salary: Double? = nil, workMode: WorkMode? = nil) {
+    init(
+        id: String = UUID().uuidString,
+        company: String,
+        title: String,
+        status: JobStatus,
+        dateAdded: Date,
+        updatedDate: Date? = nil,
+        location: String? = nil,
+        salary: Double? = nil,
+        workMode: WorkMode? = nil,
+        notes: String? = nil
+    ) {
         self.id = id
         self.company = company
         self.title = title
@@ -48,6 +60,7 @@ class Job: ObservableObject, Identifiable, Codable {
         self.location = location
         self.salary = salary
         self.workMode = workMode
+        self.notes = notes
     }
 
     required init(from decoder: Decoder) throws {
@@ -61,6 +74,7 @@ class Job: ObservableObject, Identifiable, Codable {
         location = try? container.decode(String.self, forKey: .location)
         salary = try? container.decode(Double.self, forKey: .salary)
         workMode = try? container.decode(WorkMode.self, forKey: .workMode)
+        notes = try? container.decode(String.self, forKey: .notes) // Decode notes
     }
 
     func encode(to encoder: Encoder) throws {
@@ -74,5 +88,6 @@ class Job: ObservableObject, Identifiable, Codable {
         try? container.encode(location, forKey: .location)
         try? container.encode(salary, forKey: .salary)
         try? container.encode(workMode, forKey: .workMode)
+        try? container.encode(notes, forKey: .notes) // Encode notes
     }
 }

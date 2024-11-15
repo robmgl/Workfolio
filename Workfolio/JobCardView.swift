@@ -49,6 +49,15 @@ struct JobCardView: View {
                     Text("Date Added: \(dateFormatter.string(from: job.dateAdded))")
                         .font(.footnote)
                         .foregroundColor(.gray)
+
+                    // Add Notes
+                    if let notes = job.notes, !notes.isEmpty {
+                        Text("Notes: \(notes)")
+                            .font(.footnote)
+                            .italic()
+                            .foregroundColor(.gray)
+                            .lineLimit(2)
+                    }
                 }
                 Spacer()
             }
