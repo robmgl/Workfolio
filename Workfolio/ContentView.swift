@@ -30,18 +30,22 @@ struct ContentView: View {
                         .cornerRadius(8)
                         .padding()
                     }
-                    if viewModel.filteredJobs.isEmpty {
+                    if viewModel.jobs.isEmpty {
                         VStack {
-                            Image(systemName: "briefcase.fill")
-                                .font(.system(size: 50))
-                                .foregroundColor(.gray)
-                            Text(noJobsMessage)
-                                .font(.title2)
-                                .foregroundColor(.gray)
+                            EmptyStateView()
+                                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                .background(Color(.systemGroupedBackground))
                         }
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                         .background(Color.white)
                         .cornerRadius(10)
+                    } else if viewModel.filteredJobs.isEmpty {
+                        Image(systemName: "briefcase.fill")
+                            .font(.system(size: 50))
+                            .foregroundColor(.gray)
+                        Text(noJobsMessage)
+                            .font(.title2)
+                            .foregroundColor(.gray)
                     } else {
                         VStack {
                             ForEach(viewModel.filteredJobs) { job in
@@ -89,7 +93,12 @@ struct ContentView: View {
             }
             .background(
                 NavigationLink(
-                    destination: selectedJob.map { JobDetailsView(viewModel: viewModel, job: .constant($0)) },
+                    destination: selectedJob.map {
+                        JobDetailsView(
+                            viewModel: viewModel,
+                            job: .constant($0)
+                        )
+                    },
                     isActive: $showingJobDetails,
                     label: { EmptyView() }
                 )
@@ -97,8 +106,8 @@ struct ContentView: View {
             )
         }
     }
-
-    // Computed property for the no jobs message
+    
+    // Computed property for the no jobs message (optional, no longer used in EmptyStateView)
     private var noJobsMessage: String {
         if let selectedStatus = viewModel.selectedStatus {
             return "No jobs with \(selectedStatus.rawValue) status"
@@ -115,7 +124,6 @@ extension LinearGradient {
         endPoint: .bottomTrailing
     )
 }
-
 
 #Preview {
     ContentView()
