@@ -65,13 +65,13 @@ struct EditJobView: View {
                     HStack {
                         Image(systemName: "mappin.and.ellipse")
                             .foregroundColor(.gray)
-                        TextField("Location", text: $newLocation)
+                        TextField("Location (optional)", text: $newLocation)
                             .onReceive(Just(newLocation)) { _ in limitText(&newLocation, textLimit) }
                     }
                     HStack {
                         Image(systemName: "dollarsign.circle.fill")
                             .foregroundColor(.gray)
-                        TextField("Salary", value: $newSalary, format: .currency(code: "USD"))
+                        TextField("Salary (optional)", value: $newSalary, format: .currency(code: "USD"))
                             .keyboardType(.decimalPad)
                     }
                     HStack {

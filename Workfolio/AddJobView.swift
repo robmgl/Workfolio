@@ -53,14 +53,14 @@ struct AddJobView: View {
                     HStack {
                         Image(systemName: "mappin.and.ellipse")
                             .foregroundColor(.gray)
-                        TextField("Location", text: $location)
+                        TextField("Location (optional)", text: $location)
                             .onReceive(Just(location)) { _ in limitText(&location, textLimit) }
                     }
                     
                     HStack {
                         Image(systemName: "dollarsign.circle.fill")
                             .foregroundColor(.gray)
-                        TextField("Salary", value: $salary, format: .currency(code: "USD"))
+                        TextField("Salary (optional)", value: $salary, format: .currency(code: "USD"))
                             .keyboardType(.decimalPad)
                     }
                     
