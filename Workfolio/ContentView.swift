@@ -60,17 +60,19 @@ struct ContentView: View {
             .navigationTitle("Workfolio")
             .navigationBarTitleDisplayMode(.automatic)
             .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Menu {
-                        Picker("Filter by Status", selection: $viewModel.selectedStatus) {
-                            Text("All").tag(JobStatus?.none) // Show all jobs
-                            ForEach(JobStatus.allCases) { status in
-                                Text(status.rawValue).tag(status as JobStatus?)
+                if viewModel.jobs.count > 1 {
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Menu {
+                            Picker("Filter by Status", selection: $viewModel.selectedStatus) {
+                                Text("All").tag(JobStatus?.none) // Show all jobs
+                                ForEach(JobStatus.allCases) { status in
+                                    Text(status.rawValue).tag(status as JobStatus?)
+                                }
                             }
+                        } label: {
+                            Image(systemName: "line.3.horizontal.decrease.circle") // Filter icon
+                                .foregroundColor(.accentColor)
                         }
-                    } label: {
-                        Image(systemName: "line.3.horizontal.decrease.circle") // Filter icon
-                            .foregroundColor(.accentColor)
                     }
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
