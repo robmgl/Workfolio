@@ -17,6 +17,7 @@ struct AddJobView: View {
     @State private var location: String = ""
     @State private var salary: Double?
     @State private var workMode: WorkMode? = nil
+    @State private var errorMessage: String?
 
     var body: some View {
         NavigationView {
@@ -70,7 +71,13 @@ struct AddJobView: View {
                 }
                 
                 Button(action: {
-                    if !company.isEmpty && !title.isEmpty {
+                    if company.isEmpty && title.isEmpty {
+                        errorMessage = "Company Name and Job Title are required."
+                    } else if !company.isEmpty && title.isEmpty {
+                        errorMessage = "Job Title is required."
+                    } else if company.isEmpty && !title.isEmpty {
+                        errorMessage = "Company Name is required."
+                    } else {
                         viewModel.addJob(company: company, title: title, status: status, location: location, salary: salary, workMode: workMode)
                         presentationMode.wrappedValue.dismiss()
                     }
@@ -83,20 +90,28 @@ struct AddJobView: View {
                         .cornerRadius(8)
                         .font(.headline)
                 }
+                
+                // Display error message if fields are missing
+                if let errorMessage = errorMessage {
+                    Text(errorMessage)
+                        .foregroundColor(.red)
+                        .font(.subheadline)
+                        .padding(.top, 5)
+                }
             }
             .navigationTitle("Add Job")
             .toolbar {
-                            ToolbarItem(placement: .navigationBarTrailing) {
-                                Button(action: {
-                                    presentationMode.wrappedValue.dismiss()
-                                }) {
-                                    Image(systemName: "xmark")
-                                        .foregroundColor(.black)
-                                        .font(.system(size: 20))
-                                        
-                                }
-                            }
-                        }
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button(action: {
+                        presentationMode.wrappedValue.dismiss()
+                    }) {
+                        Image(systemName: "xmark")
+                            .foregroundColor(.black)
+                            .font(.system(size: 20))
+                        
+                    }
+                }
+            }
         }
     }
 }
