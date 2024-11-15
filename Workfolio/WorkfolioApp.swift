@@ -11,7 +11,7 @@ import SwiftUI
 struct WorkfolioApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            MainView() // Use MainView as the root view
         }
     }
 }

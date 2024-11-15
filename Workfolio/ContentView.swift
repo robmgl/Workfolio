@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ContentView: View {
-    @StateObject private var viewModel = JobListViewModel()
+    @ObservedObject var viewModel: JobListViewModel // Use shared ViewModel
     @State private var showingAddJobView = false
     @State private var showingJobDetails = false
     @State private var selectedJob: Job?
@@ -126,5 +126,5 @@ extension LinearGradient {
 }
 
 #Preview {
-    ContentView()
+    ContentView(viewModel: JobListViewModel())
 }
