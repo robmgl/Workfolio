@@ -85,6 +85,18 @@ struct AddJobView: View {
                 }
             }
             .navigationTitle("Add Job")
+            .toolbar {
+                            ToolbarItem(placement: .navigationBarTrailing) {
+                                Button(action: {
+                                    presentationMode.wrappedValue.dismiss()
+                                }) {
+                                    Image(systemName: "xmark")
+                                        .foregroundColor(.black)
+                                        .font(.system(size: 20))
+                                        
+                                }
+                            }
+                        }
         }
     }
 }
