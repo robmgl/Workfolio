@@ -21,64 +21,69 @@ struct JobDetailsView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
                 // Header Section
-                VStack(alignment: .center) {
-                    Image(systemName: "\(job.company.prefix(1).lowercased()).circle.fill")
-                        .font(.system(size: 50))
-                        .foregroundColor(.gray)
+                VStack {
                     Text(job.company)
-                        .font(.largeTitle)
-                        .bold()
+                        .font(.system(size: 30, weight: .bold, design: .monospaced)) // Typewriter font for company
+                        .multilineTextAlignment(.center)
+                        .padding(.bottom, 2)
+                    Text(job.title)
+                        .font(.system(size: 24, weight: .medium, design: .monospaced)) // Typewriter font for position
+                        .foregroundColor(.secondary)
                         .multilineTextAlignment(.center)
                 }
                 .frame(maxWidth: .infinity)
+                .padding()
+                .background(LinearGradient.blueOrangeGradient.opacity(0.2))
+                .cornerRadius(10)
 
                 Divider()
 
                 // Job Details Section
-                detailRow(icon: "doc.text.fill", title: "Position", value: job.title)
-                detailRow(icon: "note.text", title: "Status", value: job.status.rawValue)
-                
-                if let location = job.location, !location.isEmpty {
-                    detailRow(icon: "mappin.and.ellipse", title: "Location", value: location)
-                }
+                VStack(alignment: .leading, spacing: 12) {
+                    detailRow(icon: "note.text", title: "Status", value: job.status.rawValue)
 
-                if let salary = job.salary {
+                    if let location = job.location, !location.isEmpty {
+                        detailRow(icon: "mappin.and.ellipse", title: "Location", value: location)
+                    }
+
+                    if let salary = job.salary {
+                        detailRow(
+                            icon: "dollarsign.circle.fill",
+                            title: "Salary",
+                            value: formattedCurrency(value: salary)
+                        )
+                    }
+
+                    if let workMode = job.workMode {
+                        detailRow(icon: "desktopcomputer", title: "Work Mode", value: workMode.rawValue)
+                    }
+
+                    if let updatedDate = job.updatedDate {
+                        detailRow(
+                            icon: "calendar",
+                            title: "Updated",
+                            value: DateFormatter.localizedString(from: updatedDate, dateStyle: .medium, timeStyle: .none)
+                        )
+                    }
+
                     detailRow(
-                        icon: "dollarsign.circle.fill",
-                        title: "Salary",
-                        value: formattedCurrency(value: salary)
+                        icon: "clock",
+                        title: "Date Added",
+                        value: DateFormatter.localizedString(from: job.dateAdded, dateStyle: .medium, timeStyle: .none)
                     )
                 }
-
-
-                if let workMode = job.workMode {
-                    detailRow(icon: "desktopcomputer", title: "Work Mode", value: workMode.rawValue)
-                }
-
-                if let updatedDate = job.updatedDate {
-                    detailRow(
-                        icon: "calendar",
-                        title: "Updated",
-                        value: DateFormatter.localizedString(from: updatedDate, dateStyle: .medium, timeStyle: .none)
-                    )
-                }
-
-                detailRow(
-                    icon: "clock",
-                    title: "Date Added",
-                    value: DateFormatter.localizedString(from: job.dateAdded, dateStyle: .medium, timeStyle: .none)
-                )
+                .padding()
+                .background(Color.white.opacity(0.9))
+                .cornerRadius(10)
+                .shadow(color: .gray.opacity(0.3), radius: 3, x: 0, y: 2)
 
                 Divider()
 
                 // Notes Section
-                VStack(alignment: .leading) {
-                    HStack {
-                        Image(systemName: "square.and.pencil.circle.fill")
-                            .foregroundColor(.gray)
-                        Text("Notes")
-                            .font(.headline)
-                    }
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Notes")
+                        .font(.headline)
+                        .padding(.bottom, 2)
 
                     if isEditingNotes {
                         VStack(alignment: .leading) {
@@ -132,6 +137,10 @@ struct JobDetailsView: View {
                         .foregroundColor(.blue)
                     }
                 }
+                .padding()
+                .background(Color.white.opacity(0.9))
+                .cornerRadius(10)
+                .shadow(color: .gray.opacity(0.3), radius: 3, x: 0, y: 2)
 
                 Spacer()
 
@@ -146,10 +155,11 @@ struct JobDetailsView: View {
                         .foregroundColor(.white)
                         .cornerRadius(8)
                 }
+                .padding(.top)
             }
             .padding()
         }
-        .background(Color.white)
+        .background(Color(.systemGroupedBackground))
         .cornerRadius(12)
         .navigationTitle("Job Details")
         .navigationBarTitleDisplayMode(.inline)
@@ -162,7 +172,7 @@ struct JobDetailsView: View {
     private func detailRow(icon: String, title: String, value: String) -> some View {
         HStack {
             Image(systemName: icon)
-                .foregroundColor(.gray)
+                .foregroundColor(.blue)
             Text("\(title):")
                 .fontWeight(.semibold)
             Text(value)
@@ -187,5 +197,6 @@ func formattedCurrency(value: Double?) -> String {
     formatter.currencyCode = "USD"
     return formatter.string(from: NSNumber(value: value)) ?? "N/A"
 }
+
 
 

@@ -12,7 +12,7 @@ struct ContentView: View {
     @State private var showingAddJobView = false
     @State private var showingJobDetails = false
     @State private var selectedJob: Job?
-    
+
     var body: some View {
         NavigationView {
             ScrollView {
@@ -30,6 +30,7 @@ struct ContentView: View {
                         .cornerRadius(8)
                         .padding()
                     }
+
                     if viewModel.jobs.isEmpty {
                         VStack {
                             EmptyStateView()
@@ -61,11 +62,19 @@ struct ContentView: View {
                 }
                 .padding()
             }
-            .navigationTitle("Workfolio")
-            .navigationBarTitleDisplayMode(.automatic)
+            .navigationTitle("")
             .toolbar {
+                ToolbarItem(placement: .principal) {
+                    HStack(spacing: 10) {
+                        Image(systemName: "briefcase.fill")
+                            .foregroundColor(.blue)
+                        Text("Workfolio")
+                            .font(.system(size: 32, weight: .bold, design: .monospaced)) // Larger title
+                            .foregroundColor(.primary)
+                    }
+                }
                 if viewModel.jobs.count > 1 {
-                    ToolbarItem(placement: .navigationBarTrailing) {
+                    ToolbarItem(placement: .navigationBarLeading) {
                         Menu {
                             Picker("Filter by Status", selection: $viewModel.selectedStatus) {
                                 Text("All").tag(JobStatus?.none) // Show all jobs
@@ -93,15 +102,10 @@ struct ContentView: View {
             }
             .background(
                 NavigationLink(
-                    destination: selectedJob.map { job in
+                    destination: selectedJob.map {
                         JobDetailsView(
                             viewModel: viewModel,
-                            job: Binding(
-                                get: { viewModel.jobs.first(where: { $0.id == job.id }) ?? job },
-                                set: { updatedJob in
-                                    viewModel.updateJob(updatedJob)
-                                }
-                            )
+                            job: .constant($0)
                         )
                     },
                     isActive: $showingJobDetails,
@@ -111,7 +115,7 @@ struct ContentView: View {
             )
         }
     }
-    
+
     // Computed property for the no jobs message (optional, no longer used in EmptyStateView)
     private var noJobsMessage: String {
         if let selectedStatus = viewModel.selectedStatus {
@@ -133,3 +137,8 @@ extension LinearGradient {
 #Preview {
     ContentView()
 }
+
+
+
+
+
