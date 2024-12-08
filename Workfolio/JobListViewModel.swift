@@ -36,10 +36,10 @@ class JobListViewModel: ObservableObject {
         saveJobs()
     }
 
-    func updateJob(_ job: Job, newStatus: JobStatus) {
-        if let index = jobs.firstIndex(where: { $0.id == job.id }) {
-            jobs[index].status = newStatus
-            jobs[index].updatedDate = Date()
+    func updateJob(_ updatedJob: Job) {
+        if let index = jobs.firstIndex(where: { $0.id == updatedJob.id }) {
+            jobs[index] = updatedJob
+            jobs = jobs // Trigger SwiftUI re-render
             saveJobs()
         }
     }
@@ -84,4 +84,3 @@ extension JSONDecoder {
         return decoder
     }()
 }
-

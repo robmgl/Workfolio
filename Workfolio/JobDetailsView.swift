@@ -19,145 +19,132 @@ struct JobDetailsView: View {
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 14) {
-                Image(systemName: "\(job.company.prefix(1).lowercased()).circle.fill")
-                    .font(.system(size: 45))
-                    .foregroundColor(.gray)
-                    .frame(maxWidth: .infinity, alignment: .center)
-                Text(job.company)
-                    .font(.system(size: 55))
-                    .bold()
-                    .frame(maxWidth: .infinity, alignment: .center)
+            VStack(alignment: .leading, spacing: 16) {
+                // Header Section
+                VStack(alignment: .center) {
+                    Image(systemName: "\(job.company.prefix(1).lowercased()).circle.fill")
+                        .font(.system(size: 50))
+                        .foregroundColor(.gray)
+                    Text(job.company)
+                        .font(.largeTitle)
+                        .bold()
+                        .multilineTextAlignment(.center)
+                }
+                .frame(maxWidth: .infinity)
+
                 Divider()
-                HStack {
-                    Image(systemName: "doc.text.fill")
-                        .foregroundColor(.gray)
-                    Text("Position: \(job.title)")
-                        .font(.system(size: 20))
-                }
-                HStack {
-                    Image(systemName: "note.text")
-                        .foregroundColor(.gray)
-                    Text("Status: \(job.status.rawValue)")
-                        .font(.system(size: 20))
-                }
+
+                // Job Details Section
+                detailRow(icon: "doc.text.fill", title: "Position", value: job.title)
+                detailRow(icon: "note.text", title: "Status", value: job.status.rawValue)
+                
                 if let location = job.location, !location.isEmpty {
-                    HStack {
-                        Image(systemName: "mappin.and.ellipse")
-                            .foregroundColor(.gray)
-                        Text("Location: \(location)")
-                            .font(.system(size: 20))
-                    }
+                    detailRow(icon: "mappin.and.ellipse", title: "Location", value: location)
                 }
+
                 if let salary = job.salary {
-                    HStack {
-                        Image(systemName: "dollarsign.circle.fill")
-                            .foregroundColor(.gray)
-                        Text("Salary: \(salary, format: .currency(code: "USD"))")
-                            .font(.system(size: 20))
-                    }
+                    detailRow(
+                        icon: "dollarsign.circle.fill",
+                        title: "Salary",
+                        value: formattedCurrency(value: salary)
+                    )
                 }
+
+
                 if let workMode = job.workMode {
-                    HStack {
-                        Image(systemName: "desktopcomputer")
-                            .foregroundColor(.gray)
-                        Text("Work Mode: \(workMode.rawValue)")
-                            .font(.system(size: 20))
-                    }
+                    detailRow(icon: "desktopcomputer", title: "Work Mode", value: workMode.rawValue)
                 }
+
                 if let updatedDate = job.updatedDate {
-                    Text("Updated: \(DateFormatter.localizedString(from: updatedDate, dateStyle: .short, timeStyle: .none))")
-                        .font(.subheadline)
-                        .foregroundColor(.gray)
+                    detailRow(
+                        icon: "calendar",
+                        title: "Updated",
+                        value: DateFormatter.localizedString(from: updatedDate, dateStyle: .medium, timeStyle: .none)
+                    )
                 }
-                Text("Date Added: \(DateFormatter.localizedString(from: job.dateAdded, dateStyle: .short, timeStyle: .none))")
-                    .font(.subheadline)
-                    .foregroundColor(.gray)
+
+                detailRow(
+                    icon: "clock",
+                    title: "Date Added",
+                    value: DateFormatter.localizedString(from: job.dateAdded, dateStyle: .medium, timeStyle: .none)
+                )
 
                 Divider()
 
-                HStack {
-                    Image(systemName: "square.and.pencil.circle.fill")
-                        .foregroundColor(.gray)
-                        .font(.title2)
-                    Text("Notes")
-                        .font(.headline)
-                }
-                .padding(.top)
-                if isEditingNotes {
-                    VStack(alignment: .leading) {
-                        TextEditor(text: $editedNotes)
-                            .frame(height: 150)
-                            .border(Color.gray, width: 1)
-                            .onReceive(Just(editedNotes)) { _ in limitText() }
-                            .toolbar {
-                                ToolbarItemGroup(placement: .keyboard) {
-                                    Spacer()
-                                    Button("Done") {
-                                        hideKeyboard()
-                                    }
-                                }
-                            }
-                        Text("\(editedNotes.count)/\(noteCharacterLimit) characters")
-                            .font(.caption)
-                            .foregroundColor(editedNotes.count > noteCharacterLimit ? .red : .gray)
-                            .padding(.top, 5)
-                    }
-                    .padding(.bottom, 10)
-
+                // Notes Section
+                VStack(alignment: .leading) {
                     HStack {
-                        Button("Save") {
-                            job.notes = editedNotes
-                            viewModel.updateJob(job, newStatus: job.status) // Save the updated notes
-                            isEditingNotes = false
-                        }
-                        .disabled(editedNotes.count > noteCharacterLimit) // Disable if limit exceeded
-                        .padding()
-                        .background(editedNotes.count > noteCharacterLimit ? Color.gray : Color.blue)
-                        .foregroundColor(.white)
-                        .cornerRadius(8)
-
-                        Button("Cancel") {
-                            isEditingNotes = false
-                        }
-                        .padding()
-                        .background(Color.gray)
-                        .foregroundColor(.white)
-                        .cornerRadius(8)
-                    }
-                } else {
-                    if let notes = job.notes, !notes.isEmpty {
-                        Text(notes)
-                            .font(.body)
-                            .padding(.vertical, 5)
-                    } else {
-                        Text("No notes added yet.")
+                        Image(systemName: "square.and.pencil.circle.fill")
                             .foregroundColor(.gray)
-                            .italic()
+                        Text("Notes")
+                            .font(.headline)
                     }
 
-                    Button("Edit Notes") {
-                        editedNotes = job.notes ?? ""
-                        isEditingNotes = true
-                    }
-                    .padding(.top, 5)
-                    .foregroundColor(.blue)
-                }
-                Spacer()
-                HStack {
-                    Button(action: {
-                        isEditingPresented = true
-                    }) {
-                        Text("Update Job")
+                    if isEditingNotes {
+                        VStack(alignment: .leading) {
+                            TextEditor(text: $editedNotes)
+                                .frame(height: 150)
+                                .border(Color.gray, width: 1)
+                                .onReceive(Just(editedNotes)) { _ in limitText() }
+                            Text("\(editedNotes.count)/\(noteCharacterLimit) characters")
+                                .font(.caption)
+                                .foregroundColor(editedNotes.count > noteCharacterLimit ? .red : .gray)
+                                .padding(.top, 5)
+                        }
+
+                        HStack {
+                            Button("Save") {
+                                var updatedJob = job
+                                updatedJob.notes = editedNotes
+                                viewModel.updateJob(updatedJob)
+                                isEditingNotes = false
+                            }
+                            .disabled(editedNotes.count > noteCharacterLimit)
                             .padding()
-                            .frame(maxWidth: .infinity)
-                            .background(Color.clear)
-                            .foregroundColor(.blue)
-                            .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.blue, lineWidth: 1))
+                            .background(editedNotes.count > noteCharacterLimit ? Color.gray : Color.blue)
+                            .foregroundColor(.white)
                             .cornerRadius(8)
-                            .padding(.bottom, 20)
+
+                            Button("Cancel") {
+                                isEditingNotes = false
+                            }
+                            .padding()
+                            .background(Color.gray)
+                            .foregroundColor(.white)
+                            .cornerRadius(8)
+                        }
+                    } else {
+                        if let notes = job.notes, !notes.isEmpty {
+                            Text(notes)
+                                .font(.body)
+                                .padding(.vertical, 5)
+                        } else {
+                            Text("No notes added yet.")
+                                .foregroundColor(.gray)
+                                .italic()
+                        }
+
+                        Button("Edit Notes") {
+                            editedNotes = job.notes ?? ""
+                            isEditingNotes = true
+                        }
+                        .padding(.top, 5)
+                        .foregroundColor(.blue)
                     }
-                    Spacer()
+                }
+
+                Spacer()
+
+                // Footer Section
+                Button(action: {
+                    isEditingPresented = true
+                }) {
+                    Text("Edit Job")
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color.blue)
+                        .foregroundColor(.white)
+                        .cornerRadius(8)
                 }
             }
             .padding()
@@ -171,15 +158,34 @@ struct JobDetailsView: View {
         }
     }
 
-    // Helper function to enforce the character limit
+    // Helper to create detail rows
+    private func detailRow(icon: String, title: String, value: String) -> some View {
+        HStack {
+            Image(systemName: icon)
+                .foregroundColor(.gray)
+            Text("\(title):")
+                .fontWeight(.semibold)
+            Text(value)
+                .font(.body)
+                .lineLimit(1)
+                .truncationMode(.tail)
+        }
+    }
+
+    // Helper to enforce the character limit
     private func limitText() {
         if editedNotes.count > noteCharacterLimit {
             editedNotes = String(editedNotes.prefix(noteCharacterLimit))
         }
     }
-
-    // Helper function to hide the keyboard
-    private func hideKeyboard() {
-        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
-    }
 }
+
+func formattedCurrency(value: Double?) -> String {
+    guard let value = value else { return "N/A" }
+    let formatter = NumberFormatter()
+    formatter.numberStyle = .currency
+    formatter.currencyCode = "USD"
+    return formatter.string(from: NSNumber(value: value)) ?? "N/A"
+}
+
+

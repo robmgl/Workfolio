@@ -93,10 +93,15 @@ struct ContentView: View {
             }
             .background(
                 NavigationLink(
-                    destination: selectedJob.map {
+                    destination: selectedJob.map { job in
                         JobDetailsView(
                             viewModel: viewModel,
-                            job: .constant($0)
+                            job: Binding(
+                                get: { viewModel.jobs.first(where: { $0.id == job.id }) ?? job },
+                                set: { updatedJob in
+                                    viewModel.updateJob(updatedJob)
+                                }
+                            )
                         )
                     },
                     isActive: $showingJobDetails,
