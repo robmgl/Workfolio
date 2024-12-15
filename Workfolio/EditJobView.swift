@@ -94,15 +94,18 @@ struct EditJobView: View {
                     } else if newCompany.isEmpty && !newTitle.isEmpty {
                         errorMessage = "Company Name is required."
                     } else {
-                        job.title = newTitle
-                        job.company = newCompany
-                        job.status = newStatus
-                        job.location = newLocation
-                        job.salary = newSalary
-                        job.workMode = newWorkMode
-                        job.updatedDate = Date()
+                        if let index = viewModel.jobs.firstIndex(where: { $0.id == job.id }) {
+                            viewModel.jobs[index].title = newTitle
+                            viewModel.jobs[index].company = newCompany
+                            viewModel.jobs[index].status = newStatus
+                            viewModel.jobs[index].location = newLocation
+                            viewModel.jobs[index].salary = newSalary
+                            viewModel.jobs[index].workMode = newWorkMode
+                            viewModel.jobs[index].updatedDate = Date()
+                        }
+
                         viewModel.saveJobs()
-                        isPresented = false // Dismiss the view
+                        isPresented = false
                     }
                 }) {
                     Text("Save Changes")
